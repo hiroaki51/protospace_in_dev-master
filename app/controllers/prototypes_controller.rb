@@ -47,7 +47,7 @@ class PrototypesController < ApplicationController
   end
 
   def edit
-    TagPrototype.find_by(prototype_id: @prototype.id).destroy_all
+    PrototypesTag.where(prototype_id:@prototype.id).destroy_all
     3.times do
       @prototype.tags.build
     end
