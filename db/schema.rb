@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180917052926) do
+ActiveRecord::Schema.define(version: 20180921070142) do
 
   create_table "captured_images", force: :cascade do |t|
     t.string  "content",      limit: 255
@@ -32,12 +32,13 @@ ActiveRecord::Schema.define(version: 20180917052926) do
 
   add_index "prototypes", ["user_id"], name: "index_prototypes_on_user_id", using: :btree
 
-  create_table "tag_prototypes", force: :cascade do |t|
-    t.integer  "prototype_id", limit: 4
-    t.integer  "tag_id",       limit: 4
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+  create_table "prototypes_tags", id: false, force: :cascade do |t|
+    t.integer "prototype_id", limit: 4
+    t.integer "tag_id",       limit: 4
   end
+
+  add_index "prototypes_tags", ["prototype_id"], name: "index_prototypes_tags_on_prototype_id", using: :btree
+  add_index "prototypes_tags", ["tag_id"], name: "index_prototypes_tags_on_tag_id", using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string   "name",       limit: 255
@@ -70,4 +71,6 @@ ActiveRecord::Schema.define(version: 20180917052926) do
 
   add_foreign_key "captured_images", "prototypes"
   add_foreign_key "prototypes", "users"
+  add_foreign_key "prototypes_tags", "prototypes"
+  add_foreign_key "prototypes_tags", "tags"
 end

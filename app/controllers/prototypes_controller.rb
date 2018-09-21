@@ -9,20 +9,37 @@ class PrototypesController < ApplicationController
   def new
     @prototype = Prototype.new
     @prototype.captured_images.build
-        # 関連オブジェクトを3回build
     3.times do
       @prototype.tags.build
     end
+    #@tag1 = Tag.new
+    #@tag2 = Tag.new
+    #@tag3 = Tag.new
+    #@tags = [@tag1,@tag2,@tag3]
   end
 
   def create
     @prototype = Prototype.new(prototype_params)
-    create_tag(params[tags_attributes: [:name]])
-    if @prototype.save #タグも保存したいのでtagにすべき？
+    n =[]
+    @prototype.tags.each do |t|
+      tag = Tag.find_by(name: t.name)
+      unless tag == nil
+        n << tag
+      else
+        n << t
+      end
+    end
+    @prototype.tags = []
+    n.each do |w|
+      @prototype.tags << w
+    end
+
+
+    if @prototype.save
       redirect_to :root, notice: 'New prototype was successfully created'
     else
       render :new
-     end
+    end
   end
 
   def show
@@ -30,14 +47,27 @@ class PrototypesController < ApplicationController
   end
 
   def edit
-    #これはtagとの関連だけ削除している
-    @prototype.tags.destroy_all
+    TagPrototype.find_by(prototype_id: @prototype.id).destroy_all
     3.times do
       @prototype.tags.build
     end
   end
 
   def update
+ 
+    n =[]
+    @prototype.tags.each do |t|
+      tag = Tag.find_by(name: t.name)
+      unless tag == nil
+        n << tag
+      else
+        n << t
+      end
+    end
+    @prototype.tags = []
+    n.each do |w|
+      @prototype.tags << w
+    end
     if @prototype.update(prototype_update_params)
       redirect_to root_path, alert: 'Prototype was successfully Update'
     else
@@ -81,8 +111,5 @@ class PrototypesController < ApplicationController
       tags_attributes: [:name,:id]
     )
   end
-  #def create_tag(tag)
-   # Tag.find_or_create_by(name:tag.name)
-  #end
 
 end
