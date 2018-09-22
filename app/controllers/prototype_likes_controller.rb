@@ -1,0 +1,2 @@
+class PrototypeLikesController < ApplicationController
+end
